@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ат-Танвир — книжный магазин</title>
+  <meta name="description" content="Ат-Танвир — книжный магазин исламской литературы. Доставка Почтой России и Ozon.">
+  <meta name="theme-color" content="#240207">
+  <link rel="icon" type="image/png" href="img/favicon.png">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preload" href="fonts/BebasNeue-Bold.woff" as="font" type="font/woff" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="header tone-dark" id="top">
+  <div class="container header__inner">
+    <a class="brand" href="#top" aria-label="Ат-Танвир — на главную">
+      <img class="brand__mark" src="img/calligraphy.png" alt="" width="52" height="37">
+      <span class="brand__name">Ат-Танвир</span>
+    </a>
+    <nav class="nav" aria-label="Разделы сайта">
+      <a href="#catalog">Каталог</a>
+      <a href="#how">Как заказать</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <button class="cart-btn" id="openCart" type="button" aria-label="Открыть корзину">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2.4l2.1 11h9.6l2-8H6.2M9 20a1 1 0 1 0 0 .01M17 20a1 1 0 1 0 0 .01"/></svg>
+      <span class="cart-btn__label">Корзина</span>
+      <span class="cart-btn__count" id="cartCount" aria-live="polite">0</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="hero tone-dark">
+    <div class="hero__bg" aria-hidden="true"><div class="hero__layer"></div></div>
+    <div class="container hero__inner">
+      <div class="hero__art">
+        <img class="hero__calligraphy" src="img/calligraphy.png" alt="Ат-Танвир, арабская каллиграфия" width="1199" height="843">
+      </div>
+      <div class="hero__text">
+        <h1 class="hero__title">Ат-Танвир</h1>
+        <div class="hero__actions">
+          <a class="btn btn--gold" href="#catalog">
+            Перейти в каталог
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a class="btn btn--ghost" href="#how">Как заказать</a>
+        </div>
+        <figure class="epigraph">
+          <blockquote>Лучше быть ненавистным людям, разъясняя им истину, чем быть любимым ими, приукрашивая для них ложь</blockquote>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <div class="seam seam--to-light" aria-hidden="true"></div>
+
+  <section class="section tone-light" id="catalog">
+    <div class="container">
+      <div class="section__head" data-rise="70">
+        <h2 class="section__title">Каталог</h2>
+        <img class="ornament" src="img/divider.png" alt="" width="2040" height="180">
+        <p class="section__sub">Цена указана за одну книгу. Стоимость доставки сообщим в WhatsApp, когда будем подтверждать заказ.</p>
+      </div>
+      <div class="books" id="catalogGrid"></div>
+    </div>
+  </section>
+
+  <div class="seam seam--to-dark" aria-hidden="true"></div>
+
+  <section class="section section--pattern tone-dark" id="how">
+    <div class="container">
+      <div class="section__head" data-rise="70">
+        <h2 class="section__title">Как заказать</h2>
+        <img class="ornament" src="img/divider.png" alt="" width="2040" height="180">
+      </div>
+      <ol class="steps">
+        <li class="step" data-rise="70">
+          <h3 class="step__title">Соберите корзину</h3>
+          <p class="step__text">Добавьте книги из каталога и укажите количество.</p>
+        </li>
+        <li class="step" data-rise="150">
+          <h3 class="step__title">Заполните данные</h3>
+          <p class="step__text">Имя, телефон, город и адрес. Выберите Почту России или Ozon.</p>
+        </li>
+        <li class="step" data-rise="110">
+          <h3 class="step__title">Отправьте в WhatsApp</h3>
+          <p class="step__text">Сообщение с заказом составится само, останется нажать «Отправить».</p>
+        </li>
+        <li class="step" data-rise="190">
+          <h3 class="step__title">Получите книги</h3>
+          <p class="step__text">Подтвердим заказ и доставку, бережно упакуем и отправим.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <div class="seam seam--to-light" aria-hidden="true"></div>
+
+  <section class="section tone-light" id="reviews">
+    <div class="container">
+      <div class="section__head" data-rise="70">
+        <h2 class="section__title">Отзывы покупателей</h2>
+        <img class="ornament" src="img/divider.png" alt="" width="2040" height="180">
+      </div>
+      <div class="reviews" id="reviewsList"></div>
+    </div>
+  </section>
+
+  <div class="seam seam--to-footer" aria-hidden="true"></div>
+</main>
+
+<footer class="footer tone-dark" id="contacts">
+  <div class="container footer__grid">
+    <div class="footer__intro">
+      <h2 class="footer__title">Контакты</h2>
+      <p class="footer__text">Ответим на вопросы о наличии, доставке и заказе.</p>
+    </div>
+    <div class="contacts" id="contactsList"></div>
+  </div>
+  <div class="container footer__bottom">
+    <span class="brand brand--footer">
+      <img class="brand__mark" src="img/calligraphy.png" alt="" width="52" height="37">
+      <span class="brand__name">Ат-Танвир</span>
+    </span>
+    <p class="footer__copy">© <span id="year"></span> Ат-Танвир. Книжный магазин</p>
+  </div>
+</footer>
+
+<!-- Корзина -->
+<div class="overlay" id="overlay" hidden></div>
+<aside class="drawer tone-light" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" aria-hidden="true" tabindex="-1">
+  <div class="drawer__head tone-dark">
+    <h2 id="drawerTitle">Ваш заказ</h2>
+    <button class="icon-btn" id="closeCart" type="button" aria-label="Закрыть корзину">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+
+  <div class="drawer__body">
+    <p class="cart-empty" id="cartEmpty">Корзина пуста. Выберите книги в каталоге.</p>
+    <ul class="cart-list" id="cartList"></ul>
+
+    <form class="order" id="orderForm" novalidate hidden>
+      <div class="total">
+        <span>Итого за книги</span>
+        <strong id="cartTotal">0 ₽</strong>
+      </div>
+      <p class="hint">Стоимость доставки уточним в WhatsApp при подтверждении заказа.</p>
+
+      <div class="field">
+        <label for="fName">Имя</label>
+        <input id="fName" name="name" type="text" autocomplete="name" required>
+        <span class="field__err" data-err="name"></span>
+      </div>
+      <div class="field">
+        <label for="fPhone">Телефон</label>
+        <input id="fPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 000-00-00" required>
+        <span class="field__err" data-err="phone"></span>
+      </div>
+
+      <fieldset class="field field--radio">
+        <legend>Способ доставки</legend>
+        <label class="radio"><input type="radio" name="delivery" value="Почта России" checked><span>Почта России</span></label>
+        <label class="radio"><input type="radio" name="delivery" value="Ozon"><span>Ozon</span></label>
+      </fieldset>
+
+      <div class="field">
+        <label for="fCity">Город</label>
+        <input id="fCity" name="city" type="text" autocomplete="address-level2" required>
+        <span class="field__err" data-err="city"></span>
+      </div>
+      <div class="field">
+        <label for="fAddress" id="addressLabel">Адрес или отделение Почты России</label>
+        <input id="fAddress" name="address" type="text" autocomplete="street-address" required>
+        <span class="field__err" data-err="address"></span>
+      </div>
+      <div class="field">
+        <label for="fComment">Комментарий <small>(необязательно)</small></label>
+        <textarea id="fComment" name="comment" rows="3"></textarea>
+      </div>
+
+      <button class="btn btn--wa btn--block" type="submit">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3s.8-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.7 1.2 1.5 1.9 1 .9 1.9 1.2 2.2 1.3.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.7-.1 1.4Z"/></svg>
+        Отправить заказ в WhatsApp
+      </button>
+      <p class="hint hint--center">Откроется WhatsApp с готовым сообщением. Останется нажать «Отправить».</p>
+      <p class="form-status" id="formStatus" role="alert"></p>
+    </form>
+  </div>
+</aside>
+
+<script src="data/books.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
