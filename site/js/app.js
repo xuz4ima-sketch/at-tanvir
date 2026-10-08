@@ -67,6 +67,7 @@
     return box;
   }
   var CART_PLUS = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2.4l2.1 11h9.6l2-8H6.2M9 20a1 1 0 1 0 0 .01M17 20a1 1 0 1 0 0 .01M12.8 9v4M10.8 11h4"/></svg>';
+  var ARROW = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 6l6 6-6 6"/></svg>';
   var ICONS = {
     whatsapp: '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3s.8-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.7 1.2 1.5 1.9 1 .9 1.9 1.2 2.2 1.3.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.1.1.7-.1 1.4Z"/></svg>',
     telegram: '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M21.9 4.2 18.6 20c-.2 1.1-.9 1.4-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1 9.3-8.4c.4-.4-.1-.6-.6-.2L6.1 13.5 1.2 12c-1.1-.3-1.1-1 .2-1.6L20.5 3c.9-.3 1.7.2 1.4 1.2Z"/></svg>',
@@ -76,34 +77,92 @@
   /* ---------- Каталог ---------- */
   function buildCatalog() {
     var grid = $("#catalogGrid");
-    BOOKS.forEach(function (b, i) {
-      var card = el("article", "book");
-      // Правая колонка поднимается из большей глубины: карточки приходят ступенькой
-      card.dataset.rise = i % 2 ? 190 : 100;
+    BOOKS.forEach(function (b) {
+      var card = el("article", "book reveal");
       card.dataset.id = b.id;
 
-      var cover = el("div", "book__cover");
-      var img = document.createElement("img");
-      img.src = b.image; img.alt = "Обложка книги «" + b.title + "»";
-      img.loading = "lazy"; img.width = 600; img.height = 800;
-      cover.append(img);
-
       var body = el("div", "book__body");
-      if (b.preorder) body.append(el("p", "book__tag", "Под заказ"));
-      body.append(el("h3", "book__title", b.title), el("p", "book__author", b.author));
+      var title = el("h3", "book__title", b.title);
+      title.title = b.title;   // название обрезается до двух строк, полностью видно во всплывающей подсказке
+      var author = el("p", "book__author", b.author);
+      author.title = b.author;
+      body.append(title, author);
       if (b.note) body.append(el("p", "book__note", b.note));
 
       var buy = el("div", "book__buy");
-      var price = el("div", "price");
-      price.textContent = b.price.toLocaleString("ru-RU").replace(/ /g, " ") + " ";
-      price.append(el("small", null, "₽"));
-      var slot = el("div", "book__slot");
-      buy.append(price, slot);
+      buy.append(el("div", "price", rub(b.price)), el("div", "book__slot"));
       body.append(buy);
 
-      card.append(cover, body);
+      card.append(bookMedia(b), body);
       grid.append(card);
     });
+  }
+
+  // Фото книги с метками поверх. Если фото несколько: лента со свайпом, стрелки и точки внизу
+  function bookMedia(b) {
+    var photos = b.images && b.images.length ? b.images : [b.image];
+    var media = el("div", "book__media");
+    var track = el("div", "book__track");
+    photos.forEach(function (src, i) {
+      var slide = el("div", "book__slide");
+      var img = document.createElement("img");
+      img.src = src; img.loading = "lazy"; img.width = 640; img.height = 800;
+      img.alt = i === 0 ? "Обложка книги «" + b.title + "»" : "Фото " + (i + 1) + " книги «" + b.title + "»";
+      slide.append(img);
+      track.append(slide);
+    });
+    media.append(track);
+
+    // Слева метки товара («Под заказ» ставится по preorder), справа одна метка badge, например формат
+    var tags = (b.preorder ? ["Под заказ"] : []).concat(b.tags || []);
+    if (tags.length || b.badge) {
+      var pills = el("div", "book__pills");
+      var left = el("div", "book__tags");
+      tags.forEach(function (t) { left.append(el("span", "pill", t)); });
+      pills.append(left);
+      if (b.badge) pills.append(el("span", "pill book__badge", b.badge));
+      media.append(pills);
+    }
+
+    if (photos.length > 1) {
+      track.setAttribute("aria-label", "Фото книги «" + b.title + "»");
+      track.tabIndex = 0;   // ленту можно листать стрелками клавиатуры
+      var prev = el("button", "book__nav book__nav--prev");
+      var next = el("button", "book__nav book__nav--next");
+      prev.type = next.type = "button";
+      prev.innerHTML = ARROW.replace("M10 6l6 6-6 6", "M14 6l-6 6 6 6");
+      next.innerHTML = ARROW;
+      prev.setAttribute("aria-label", "Предыдущее фото");
+      next.setAttribute("aria-label", "Следующее фото");
+      var dots = el("div", "book__dots");
+      dots.setAttribute("aria-hidden", "true");
+      photos.forEach(function () { dots.append(el("span", "book__dot")); });
+
+      var mark = function (i) {
+        Array.prototype.forEach.call(dots.children, function (d, k) { d.classList.toggle("is-active", k === i); });
+        prev.disabled = i === 0;
+        next.disabled = i === photos.length - 1;
+      };
+      var current = function () { return Math.round(track.scrollLeft / (track.clientWidth || 1)); };
+      // Стрелки отмечают точку сразу и не дают плавной прокрутке перебивать её по дороге; свайп — по ходу прокрутки
+      var target = null;
+      var go = function (step) {
+        var i = Math.max(0, Math.min(photos.length - 1, (target != null ? target : current()) + step));
+        target = i;
+        track.scrollTo({ left: i * track.clientWidth });
+        mark(i);
+      };
+      prev.addEventListener("click", function () { go(-1); });
+      next.addEventListener("click", function () { go(1); });
+      track.addEventListener("scroll", function () {
+        if (target != null) { if (current() === target) target = null; return; }
+        mark(current());
+      }, { passive: true });
+      track.addEventListener("pointerdown", function () { target = null; });   // свайп отменяет переход по стрелке
+      mark(0);
+      media.append(prev, next, dots);
+    }
+    return media;
   }
 
   function renderCatalog() {
@@ -120,8 +179,9 @@
         if (had) { var again = slot.querySelector('[data-act="' + had + '"]'); if (again) again.focus(); }
       } else {
         var add = el("button", "add-btn");
-        add.innerHTML = CART_PLUS + "<span>Добавить в корзину</span>";
+        add.innerHTML = '<span>В корзину</span><span class="add-btn__icon">' + CART_PLUS + "</span>";
         add.type = "button"; add.dataset.act = "add"; add.dataset.id = b.id;
+        add.setAttribute("aria-label", "Добавить в корзину: " + b.title);
         slot.append(add);
         if (had === "dec") add.focus();
       }
@@ -170,10 +230,9 @@
   /* ---------- Отзывы и контакты ---------- */
   function buildReviews() {
     var box = $("#reviewsList");
-    REVIEWS.forEach(function (r, i) {
-      var card = el("figure", "review");
-      card.dataset.rise = [80, 160, 120][i % 3];
-      card.append(el("blockquote", "review__text", r.text), el("figcaption", "review__author", r.author));
+    REVIEWS.forEach(function (r) {
+      var card = el("figure", "review reveal");
+      card.append(el("blockquote", "review__text", r.text));
       box.append(card);
     });
   }
@@ -323,88 +382,133 @@
   });
 
   /* ---------- Движение ---------- */
-  // Всё привязано к положению прокрутки, а не ко времени, поэтому при прокрутке назад движение идёт обратно.
-  // Первый экран: текст уходит вверх быстрее страницы и гаснет, каллиграфия и узор отстают (параллакс).
-  // Элементы с data-rise="N" поднимаются из глубины N пикселей, пока входят в экран. Разная глубина
-  // у соседей даёт ступеньку. На тёмном фоне они ещё и выходят из тени. Прогресс 0…1 пишется в --p,
-  // от него раскрываются орнамент, золотая линия над шагом и ромб над отзывом.
+  // Спокойное появление: элементы .reveal один раз проявляются, когда входят в экран. Здесь только
+  // наблюдение (IntersectionObserver), сама анимация в style.css, раздел «Появление при прокрутке».
+  // Вошедшие в экран вместе получают задержку с шагом 0.08с и идут каскадом.
+  // На десктопе фото библиотеки и свечение первого экрана отстают от прокрутки на 18% (параллакс).
+  // Секции складываются стопкой листов: следующий наезжает на предыдущий, тот уменьшается и темнеет (initStack).
+  // Прокрутку не перехватываем. При «уменьшить движение» в системе всё видно сразу и ничего не двигается.
   var header = $(".header");
-  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var STAGGER = 0.08, MAX_DELAY = 0.48, PARALLAX = 0.18;
 
-  function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
-  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function initHeader() {
+    function onScroll() { header.classList.toggle("is-scrolled", window.scrollY > 8); }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
 
-  function initMotion() {
-    var hero = $(".hero"), heroBg = $(".hero__layer"), heroText = $(".hero__text"), heroArt = $(".hero__art");
-    var risers = Array.prototype.slice.call(document.querySelectorAll("[data-rise]"));
-    var items = [], heroH = 1, vh = 1, maxScroll = 1, queued = false;
-
-    function measure() {
-      var y = window.scrollY;
-      var w = window.innerWidth;
-      var depthScale = w < 640 ? 0.55 : w < 900 ? 0.75 : 1;
-      vh = window.innerHeight;
-      heroH = hero.offsetHeight || 1;
-      maxScroll = Math.max(1, document.documentElement.scrollHeight - vh);
-      items = risers.map(function (n) {
-        // Положение без нашего сдвига: из координат вычитаем текущий translateY
-        var top = n.getBoundingClientRect().top + y - (n._shift || 0);
-        var start = top - vh;                                   // верх элемента у нижнего края экрана
-        var end = Math.min(top - vh * 0.3, maxScroll);          // поднялся на 30% экрана, либо конец страницы
-        if (end <= start) end = start + 1;
-        return { node: n, start: start, end: end, depth: Number(n.dataset.rise) * depthScale, dark: !!n.closest(".tone-dark") };
-      });
-      frame();
+  function initReveal() {
+    var nodes = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      nodes.forEach(function (n) { n.classList.add("is-visible"); });
+      return;
     }
+    var io = new IntersectionObserver(function (entries) {
+      var shown = entries.filter(function (e) { return e.isIntersecting; }).map(function (e) { return e.target; });
+      // Каскад идёт в порядке страницы: слева направо и сверху вниз
+      shown.sort(function (a, b) { return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1; });
+      shown.forEach(function (n, i) {
+        n.style.setProperty("--delay", Math.min(i * STAGGER, MAX_DELAY).toFixed(2) + "s");
+        n.classList.add("is-visible");
+        io.unobserve(n);
+      });
+    }, { rootMargin: "0px 0px -8% 0px" });   // срабатывает, когда элемент чуть поднялся над нижним краем экрана
+    nodes.forEach(function (n) { io.observe(n); });
+  }
+
+  function initParallax() {
+    var hero = $(".hero"), wide = window.matchMedia("(min-width: 900px)");
+    var heroH = 1, last = "", queued = false;
+
+    function frame() {
+      queued = false;
+      // Ниже первого экрана сдвиг уже не виден, дальше его не пересчитываем
+      var v = wide.matches ? (Math.min(window.scrollY, heroH) * PARALLAX).toFixed(1) + "px" : "0px";
+      if (v !== last) { hero.style.setProperty("--parallax", v); last = v; }
+    }
+    function measure() { heroH = hero.offsetHeight || 1; frame(); }
+
+    window.addEventListener("scroll", function () {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(frame);
+    }, { passive: true });
+    window.addEventListener("resize", measure);
+    measure();
+  }
+
+  // Стопка листов (style.css, «Листы при прокрутке»): прямые дети .stack, то есть секции и группы секций.
+  // Лист останавливается (sticky): высокий, когда его низ дошёл до низа экрана, короткий сразу под шапкой.
+  // Пока следующий лист поднимается от этого места до шапки, --cover растёт от 0 до 1.
+  // Позиции считаем по обычному потоку один раз (и при смене размеров),
+  // поэтому в кадре прокрутки раскладку не читаем.
+  function initStack() {
+    var stack = $(".stack");
+    var items = Array.prototype.slice.call(stack.children);
+    var tops = [], sticks = [], starts = [], covers = [], headH = 0, queued = false;
 
     function frame() {
       queued = false;
       var y = window.scrollY;
-      header.classList.toggle("is-scrolled", y > 8);
-
-      if (y <= heroH) {
-        var h = clamp(y / heroH);
-        // Каллиграфия стоит над названием и уходит вверх быстрее него, поэтому они не наезжают друг на друга
-        heroText.style.transform = "translate3d(0," + (-y * 0.18).toFixed(1) + "px,0)";
-        heroText.style.opacity = clamp(1 - h * 1.5).toFixed(3);
-        heroArt.style.transform = "translate3d(0," + (-y * 0.3).toFixed(1) + "px,0) scale(" + (1 - h * 0.08).toFixed(4) + ")";
-        heroArt.style.opacity = clamp(1 - h * 1.15).toFixed(3);
-        heroBg.style.transform = "translate3d(0," + (y * 0.4).toFixed(1) + "px,0)";
-      }
-
-      for (var i = 0; i < items.length; i++) {
-        var it = items[i];
-        var q = clamp((y - it.start) / (it.end - it.start));
-        var e = easeOut(q);
-        var shift = (1 - e) * it.depth;
-        var s = it.node.style;
-        it.node._shift = shift;
-        s.transform = shift > 0.1 ? "translate3d(0," + shift.toFixed(1) + "px,0)" : "";
-        s.opacity = q < 0.66 ? (q * 1.5).toFixed(3) : "";
-        if (it.dark) s.filter = e < 0.995 ? "brightness(" + (0.3 + 0.7 * e).toFixed(3) + ")" : "";
-        s.setProperty("--p", e.toFixed(3));
+      for (var i = 0; i < items.length - 1; i++) {
+        var at = tops[i + 1] - y;   // где сейчас на экране верх следующей секции
+        var c = Math.min(Math.max((starts[i] - at) / Math.max(starts[i] - headH, 1), 0), 1).toFixed(3);
+        if (c !== covers[i]) { items[i].style.setProperty("--cover", c); covers[i] = c; }
       }
     }
+    function measure() {
+      var vh = document.documentElement.clientHeight;   // без адресной строки телефона, поэтому не прыгает
+      var y = stack.getBoundingClientRect().top + window.scrollY;
+      headH = header.offsetHeight;
+      items.forEach(function (s, i) {
+        var h = s.offsetHeight;
+        y += parseFloat(getComputedStyle(s).marginTop) || 0;   // лист заходит на предыдущую секцию
+        tops[i] = y;
+        y += h;
+        sticks[i] = Math.min(headH, vh - h);
+        s.style.top = sticks[i] + "px";
+        // Видимая часть остановившегося листа: от точки у шапки до его низа. К этой точке лист уменьшается,
+        // по этой части идёт затемнение с размытием
+        var seen = Math.max(0, h - (vh - headH));
+        s.style.setProperty("--seen", seen + "px");
+        s.style.setProperty("--seen-h", h - seen + "px");
+      });
+      // Где на экране верх следующей секции в момент, когда эта остановилась: отсюда начинается накрытие
+      for (var i = 0; i < items.length - 1; i++) starts[i] = tops[i + 1] - tops[i] + sticks[i];
+      frame();
+    }
 
-    function queue() {
+    // Браузер ведёт ссылку к секции туда, где она сейчас остановилась, а не к её месту в потоке.
+    // Поэтому переходы по ссылкам на разделы считаем сами. Секция бывает листом или лежит в группе
+    // (тогда offsetTop отсчитан от группы: она sticky, то есть позиционирована). Нижняя секция группы
+    // не поднимется к шапке: группа остановится раньше. Тогда едем до остановки, пока следующий лист не наехал
+    document.addEventListener("click", function (e) {
+      var a = e.target.closest('a[href^="#"]');
+      var target = a && document.getElementById(a.getAttribute("href").slice(1));
+      var i = -1;
+      items.forEach(function (s, k) { if (target && s.contains(target)) i = k; });
+      if (!target || (i < 0 && target !== header)) return;
+      e.preventDefault();
+      var y = i < 0 ? 0 : tops[i] + (target === items[i] ? 0 : target.offsetTop) - headH;
+      if (i >= 0 && i < items.length - 1) y = Math.min(y, tops[i] - sticks[i]);
+      window.scrollTo({ top: Math.max(y, 0), behavior: "smooth" });
+      history.pushState(null, "", a.getAttribute("href"));
+    });
+
+    stack.classList.add("is-stacked");
+    window.addEventListener("scroll", function () {
       if (queued) return;
       queued = true;
       requestAnimationFrame(frame);
-    }
-
-    window.addEventListener("scroll", queue, { passive: true });
+    }, { passive: true });
     window.addEventListener("resize", measure);
-    window.addEventListener("load", measure);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
-    // Высота страницы меняется (догрузились обложки, шрифты): пересчитываем позиции
-    if ("ResizeObserver" in window) new ResizeObserver(function () { measure(); }).observe(document.body);
+    // Высота секций меняется после загрузки шрифтов и фото: тогда пересчитываем
+    if ("ResizeObserver" in window) {
+      var ro = new ResizeObserver(measure);
+      items.forEach(function (s) { ro.observe(s); });
+    }
     measure();
-  }
-
-  function initStatic() {
-    function onScroll() { header.classList.toggle("is-scrolled", window.scrollY > 8); }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
   }
 
   /* ---------- Старт ---------- */
@@ -413,5 +517,7 @@
   buildReviews();
   buildContacts();
   render();
-  if (reduceMotion) initStatic(); else initMotion();
+  initHeader();
+  initReveal();
+  if (!reduceMotion) { initParallax(); initStack(); }
 })();
