@@ -24,7 +24,7 @@
       <img class="brand__mark" src="img/calligraphy.png" alt="" width="52" height="37">
       <span class="brand__name">Ат-Танвир</span>
     </a>
-    <nav class="nav" aria-label="Разделы сайта">
+    <nav class="nav" id="siteNav" aria-label="Разделы сайта">
       <a href="#about">О нас</a>
       <a href="#catalog">Каталог</a>
       <a href="#how">Как заказать</a>
@@ -35,6 +35,10 @@
       <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2.4l2.1 11h9.6l2-8H6.2M9 20a1 1 0 1 0 0 .01M17 20a1 1 0 1 0 0 .01"/></svg>
       <span class="cart-btn__label">Корзина</span>
       <span class="cart-btn__count" id="cartCount" aria-live="polite">0</span>
+    </button>
+    <!-- Кнопка меню: на телефоне и планшете, где разделы не помещаются в шапку -->
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="siteNav">
+      <span class="menu-btn__bars" aria-hidden="true"></span>
     </button>
   </div>
 </header>

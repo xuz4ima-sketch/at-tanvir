@@ -402,6 +402,32 @@
     onScroll();
   }
 
+  // Меню на телефоне и планшете: кнопка открывает список разделов под шапкой. Закрывается при выборе
+  // раздела, нажатии мимо меню, клавише Esc и когда окно становится шире 900px (там разделы видны в шапке)
+  function initMenu() {
+    var btn = $("#menuBtn");
+    function setMenu(open, refocus) {
+      header.classList.toggle("is-menu-open", open);
+      btn.setAttribute("aria-expanded", String(open));
+      btn.setAttribute("aria-label", open ? "Закрыть меню" : "Открыть меню");
+      if (!open && refocus) btn.focus();
+    }
+    function isMenuOpen() { return header.classList.contains("is-menu-open"); }
+    btn.addEventListener("click", function () { setMenu(!isMenuOpen()); });
+    document.addEventListener("click", function (e) {
+      if (!isMenuOpen()) return;
+      if (e.target.closest("#siteNav a") || !header.contains(e.target)) setMenu(false);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && isMenuOpen()) setMenu(false, true);
+    });
+    var wide = window.matchMedia("(min-width: 900px)");
+    var onWide = function () { if (wide.matches) setMenu(false); };
+    if (wide.addEventListener) wide.addEventListener("change", onWide); else wide.addListener(onWide);
+    // Корзина открывается поверх: меню под ней не нужно
+    $("#openCart").addEventListener("click", function () { setMenu(false); });
+  }
+
   function initReveal() {
     var nodes = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
     if (reduceMotion || !("IntersectionObserver" in window)) {
@@ -523,6 +549,7 @@
   buildContacts();
   render();
   initHeader();
+  initMenu();
   initReveal();
   if (!reduceMotion) { initParallax(); initStack(); }
 })();
