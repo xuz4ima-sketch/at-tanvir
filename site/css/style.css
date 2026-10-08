@@ -6,8 +6,8 @@
   Между секциями нет узоров. Первый экран, «О нас», каталог с «Как заказать» и отзывы с контактами это листы:
   при прокрутке следующий наезжает на предыдущий, а тот останавливается, уменьшается и темнеет
   (раздел «Листы при прокрутке» ниже).
-  На светлом фоне свои цвета текста и линий: блок «Светлая поверхность» ниже. Они же у корзины.
-  «Отзывы» лежат на фото библиотеки под бордовым затемнением.
+  На светлом фоне свои цвета текста и линий: блок «Светлая поверхность» ниже. Они же у карточек книг, отзывов и корзины.
+  «Отзывы» бордовые, как каталог. Фото библиотеки только на первом экране.
   Элементы с классом .reveal один раз проявляются при входе в экран
   (раздел «Появление при прокрутке» ниже и «Движение» в js/app.js).
   Все цвета и шрифты меняются в блоке :root.
@@ -23,7 +23,7 @@
   color-scheme: dark;
 
   /* Два основных цвета. Порядок на странице: первый экран бордовый, «О нас» пергамент, каталог бордовый,
-     «Как заказать» пергамент, отзывы на фото под бордовым, контакты пергамент, подвал бордовый */
+     «Как заказать» пергамент, отзывы бордовые, контакты пергамент, подвал бордовый */
   --wine: #4a0410;        /* первый цвет: бордовый, как фон логотипа */
   --wine-rgb: 74, 4, 16;  /* он же для полупрозрачных слоёв */
   --wine-shade: #38030c;  /* низ бордовой секции: к нему она плавно темнеет */
@@ -32,10 +32,6 @@
   --parchment: #f0e6d4;   /* второй цвет: пергамент, как страницы книги */
   --bg: var(--wine);      /* фон страницы по умолчанию */
   --bg-footer: var(--wine-shade);
-  --photo-tint: rgba(var(--wine-rgb), .86);   /* затемнение фото библиотеки в «Отзывах» */
-  --review-bg: rgba(var(--wine-deep-rgb), .5);  /* фон отзыва поверх фото */
-  --review-inner-line: rgba(201, 154, 69, .25);   /* внутренняя линия рамки отзыва */
-  --review-clasp-bg: var(--wine);              /* подложка звезды на верхней линии рамки */
   --bg-deep: var(--wine-deep);   /* шапка при прокрутке, счётчик корзины */
   --header-bg: rgba(var(--wine-deep-rgb), .88);
   --field-bg: #2c020a;    /* подложка фото в карточке, темнее карточки */
@@ -55,19 +51,22 @@
   --line: rgba(201, 154, 69, .55);   /* разделители и тонкие линии */
   --line-faint: rgba(201, 154, 69, .14);
 
-  /* Карточки книг: тёмно-бордовые, чуть темнее фона каталога */
-  --card-bg: #330309;
-  --card-line: rgba(201, 154, 69, .2);      /* рамка */
-  --card-line-hover: rgba(201, 154, 69, .5);
-  --card-shadow: 0 18px 40px -24px rgba(0, 0, 0, .65);
-  --card-shadow-hover: 0 26px 48px -24px rgba(0, 0, 0, .75);
+  /* Карточки книг: пергамент, как блок «О нас», на бордовом фоне каталога. Как страница книги на тёмном столе.
+     Цвета текста внутри берутся из «Светлой поверхности» */
+  --card-bg: var(--grain), var(--parchment);
+  --card-line: rgba(201, 154, 69, .5);      /* золотая кромка по краю */
+  --card-line-hover: rgba(239, 208, 143, .95);
+  --card-shadow: inset 0 1px 0 rgba(255, 255, 255, .55), 0 22px 44px -26px rgba(10, 0, 2, .9);
+  --card-shadow-hover: inset 0 1px 0 rgba(255, 255, 255, .55), 0 32px 56px -24px rgba(10, 0, 2, .95);
   --card-radius: 20px;
   --media-radius: 14px;                     /* скругление фото внутри карточки */
-  --note-color: rgba(191, 169, 143, .85);   /* описание: --text-soft с прозрачностью 85% */
-  /* Метки-«таблетки» поверх фото: тёмное стекло. Фон не светлее .65, чтобы текст читался и на белом снимке */
-  --pill-bg: rgba(23, 1, 4, .65);
-  --pill-line: rgba(237, 227, 211, .28);
-  --buy-icon-bg: var(--wine-deep);                /* круг с иконкой внутри кнопки «В корзину» */
+  /* Стрелки и точки листания поверх фото: светлая бумага. Фон плотный (.92), чтобы читались и на тёмном снимке */
+  --pill-bg: rgba(251, 246, 236, .92);
+  --pill-line: rgba(143, 100, 32, .3);
+  /* «В корзину» на пергаменте: бордовая таблетка со светлым золотым текстом (контраст 11:1), справа золотой круг с иконкой */
+  --buy-bg: var(--wine);
+  --buy-bg-hover: #620819;
+  --buy-text: #f6e4b8;
   --title-shadow: 0 2px 22px rgba(23, 1, 4, .7);
 
   --wa-1: #1d8048;        /* кнопка WhatsApp: белый текст читается на обоих оттенках */
@@ -99,10 +98,10 @@
 }
 
 /* ---------- Светлая поверхность ---------- */
-/* Пергаментные секции и корзина. Здесь те же переменные, что в :root, но под светлый фон,
+/* Пергаментные секции, карточки книг, отзывы и корзина. Здесь те же переменные, что в :root, но под светлый фон,
    поэтому заголовки, текст, линии, поля и кнопки внутри перекрашиваются сами.
    Контраст: текст 14:1, второстепенный 6.7:1, тёмное золото 4.2:1, ошибка 5.7:1 */
-.section--alt, .drawer__body {
+.section--alt, .drawer__body, .book, .review {
   color-scheme: light;
   --text: #2b0b10;
   --text-soft: #664638;
@@ -159,6 +158,7 @@ button { font: inherit; }
 .btn:hover::after, .cart-btn:hover::after { left: 130%; }
 .btn svg { flex: none; transition: transform .3s var(--ease); }
 .btn:hover svg { transform: translateX(4px); }
+.btn:hover .btn__icon { transform: none; }   /* значок перед текстом стоит на месте, сдвигается только стрелка */
 .btn:active, .cart-btn:active { transform: translateY(0) scale(.97); }
 
 .btn { height: 54px; padding: 0 30px; font-size: 16px; }
@@ -299,15 +299,10 @@ button { font: inherit; }
 .epigraph blockquote { margin: 0; font-family: var(--font-serif); font-style: italic; font-weight: 500; font-size: 21px; line-height: 1.45; color: var(--text-soft); text-wrap: balance; text-shadow: 0 1px 12px rgba(23, 1, 4, .85); }
 
 /* ---------- Секции ---------- */
-/* Тон секции задаёт модификатор: без него бордовый, .section--alt пергамент, .section--photo на фото под бордовым.
+/* Тон секции задаёт модификатор: без него бордовый, .section--alt пергамент.
    Фон без узоров: бордовый с затемнением книзу, пергамент с фактурой бумаги. z-index: 0 делает каждую секцию отдельным слоем. */
 .section { position: relative; z-index: 0; --pad: 64px; padding: var(--pad) 0; background: linear-gradient(180deg, var(--wine), var(--wine-shade)); }
 .section--alt { background: var(--grain), var(--parchment); }
-.section--photo { background: var(--wine); }
-.section__photo {
-  position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
-  background: linear-gradient(var(--photo-tint), var(--photo-tint)), url("../img/library.jpg") center / cover no-repeat;
-}
 .section > .container, .footer > .container { position: relative; z-index: 2; }
 
 /* ---------- Листы при прокрутке ---------- */
@@ -393,7 +388,7 @@ button { font: inherit; }
 .book:hover { transform: translateY(-4px); border-color: var(--card-line-hover); box-shadow: var(--card-shadow-hover); }
 
 /* Фото 4:5 со своим скруглением. Несколько фото листаются свайпом (прокрутка с привязкой) или стрелками */
-.book__media { position: relative; aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--media-radius); background: var(--field-bg); }
+.book__media { position: relative; aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--media-radius); background: var(--field-bg); box-shadow: 0 0 0 1px var(--line-faint); }
 .book__track {
   display: flex; height: 100%; overflow-x: auto; overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none;
@@ -402,16 +397,6 @@ button { font: inherit; }
 .book__slide { flex: 0 0 100%; height: 100%; overflow: hidden; scroll-snap-align: start; }
 .book__slide img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s var(--ease); }
 .book:hover .book__slide img { transform: scale(1.04); }
-
-.pill {
-  display: inline-block; padding: 5px 10px; border-radius: 999px;
-  border: 1px solid var(--pill-line); background: var(--pill-bg);
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-  color: var(--text); font-size: 11.5px; font-weight: 600; line-height: 1.2; white-space: nowrap;
-}
-.book__pills { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 6px; pointer-events: none; }
-.book__tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.book__badge { margin-left: auto; }
 
 /* Стрелки и точки появляются, только если фото больше одного */
 .book__nav {
@@ -424,52 +409,62 @@ button { font: inherit; }
 .book__nav--prev { left: 8px; }
 .book__nav--next { right: 8px; }
 .book__media:hover .book__nav, .book__nav:focus-visible { opacity: 1; }
-.book__nav:hover { background: rgba(23, 1, 4, .85); }
+.book__nav:hover { background: #fffaf0; }
 .book__nav[disabled] { opacity: 0 !important; pointer-events: none; }
 @media (hover: none) { .book__nav { display: none; } }   /* на сенсорных экранах листают свайпом */
 .book__dots { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); display: flex; gap: 6px; padding: 5px 8px; border-radius: 999px; background: var(--pill-bg); pointer-events: none; }
-.book__dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(237, 227, 211, .4); transition: background-color .3s, width .3s var(--ease); }
+.book__dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(var(--wine-rgb), .28); transition: background-color .3s, width .3s var(--ease); }
 .book__dot.is-active { width: 16px; border-radius: 3px; background: var(--gold-light); }
 
-/* Текст под фото */
-.book__body { display: flex; flex-direction: column; flex: 1; min-width: 0; padding: 14px 4px 2px; }
-.book__title { margin: 0; font-family: var(--font-sans); font-weight: 700; font-size: 19px; line-height: 1.25; color: var(--text);
+/* Текст под фото, как на странице книги: название антиквой (Cormorant Garamond, как цитаты и итог в корзине)
+   бордовым, автор и описание спокойным коричневым */
+.book__body { display: flex; flex-direction: column; flex: 1; min-width: 0; padding: 16px 6px 4px; }
+.book__info { margin-bottom: 16px; }
+.book__title { margin: 0; font-family: var(--font-serif); font-weight: 700; font-size: 23px; line-height: 1.12; color: var(--gold-light); text-wrap: balance;
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-.book__author { margin: 6px 0 0; font-size: 14px; line-height: 1.4; color: var(--text-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.book__note { margin: 6px 0 0; font-size: 14px; line-height: 1.4; color: var(--note-color);
+.book__author { margin: 8px 0 0; font-size: 13.5px; font-weight: 600; line-height: 1.4; color: var(--text-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.book__note { margin: 6px 0 0; font-size: 14px; line-height: 1.45; color: var(--text-soft);
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
 
-/* Нижняя строка всегда прижата к низу: цена слева, кнопка справа. В узкой карточке кнопка уходит под цену */
-.book__buy { margin-top: auto; padding-top: 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.price { font-family: var(--font-sans); font-weight: 800; font-size: 20px; line-height: 1; color: var(--gold-light); font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
+/* Нижняя строка всегда прижата к низу и отделена тонкой линией: цена слева, кнопка справа.
+   В узкой карточке кнопка уходит под цену */
+.book__buy { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line-faint); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.price { font-family: var(--font-serif); font-weight: 700; font-size: 27px; line-height: 1; color: var(--gold-light); font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
 .book__slot { flex: none; width: 138px; }
 @container (max-width: 224px) {
   .book__buy { flex-direction: column; align-items: stretch; gap: 12px; }
   .book__slot { width: 100%; }
 }
 
-/* «В корзину»: золотая таблетка, как «Перейти в каталог», справа круг с иконкой. Счётчик той же формы и размера */
+/* «В корзину»: бордовая таблетка на пергаменте, справа золотой круг с иконкой, как золото на обложке.
+   Счётчик той же формы и размера */
 .add-btn {
   position: relative; overflow: hidden;
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
-  width: 100%; height: 44px; padding: 0 5px 0 16px; cursor: pointer;
+  width: 100%; height: 44px; padding: 0 5px 0 18px; cursor: pointer;
   border: 0; border-radius: 999px;
-  background: var(--gold-grad); color: var(--on-gold);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), inset 0 -2px 0 rgba(120, 80, 10, .22);
-  font-family: var(--font-sans); font-weight: 700; font-size: 14px; letter-spacing: .01em; line-height: 1; white-space: nowrap;
-  transition: background .3s, color .25s;
+  background: var(--buy-bg); color: var(--buy-text);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), 0 10px 20px -12px rgba(var(--wine-rgb), .9);
+  font-family: var(--font-sans); font-weight: 700; font-size: 14px; letter-spacing: .02em; line-height: 1; white-space: nowrap;
+  transition: background-color .25s, box-shadow .3s var(--ease), transform .25s var(--ease);
 }
-.add-btn__icon { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: var(--buy-icon-bg); color: var(--gold-light); transition: transform .3s var(--ease); }
+.add-btn__icon {
+  flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%;
+  background: var(--gold-grad); color: var(--on-gold); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6);
+  transition: transform .3s var(--ease);
+}
 .add-btn__icon svg { width: 17px; height: 17px; }
-.add-btn:not([disabled]):hover, .book:hover .add-btn:not([disabled]) { background: var(--gold-grad-hover); }
+.add-btn:not([disabled]):hover, .book:hover .add-btn:not([disabled]) { background: var(--buy-bg-hover); }
+.add-btn:not([disabled]):hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), 0 14px 24px -12px rgba(var(--wine-rgb), 1); }
 .add-btn:not([disabled]):hover .add-btn__icon { transform: rotate(-10deg); }
 .add-btn:not([disabled]):active { transform: scale(.98); }
-.add-btn[disabled] { justify-content: center; padding: 0 12px; background: transparent; box-shadow: none; border: 1px solid var(--card-line); color: var(--text-soft); cursor: not-allowed; }
+.add-btn[disabled] { justify-content: center; padding: 0 12px; background: transparent; box-shadow: none; border: 1px dashed var(--line); color: var(--text-soft); font-weight: 600; cursor: not-allowed; }
 
+/* Книга уже в корзине: та же таблетка, но контурная, чтобы не спорить с кнопками «В корзину» */
 .qty { display: inline-flex; align-items: center; justify-content: space-between; }
-.qty--card { width: 100%; height: 44px; padding: 0 4px; border-radius: 999px; border: 1px solid var(--line); background: transparent; }
+.qty--card { width: 100%; height: 44px; padding: 0 4px; border-radius: 999px; border: 1px solid rgba(var(--wine-rgb), .4); background: rgba(255, 255, 255, .35); }
 .qty--card .qty__btn { width: 36px; height: 36px; background: transparent; color: var(--gold-light); box-shadow: none; font-size: 21px; font-weight: 500; transition: background-color .25s, transform .2s var(--ease); }
-.qty--card .qty__btn:hover { transform: none; background: var(--line-faint); box-shadow: none; }
+.qty--card .qty__btn:hover { transform: none; background: rgba(var(--wine-rgb), .08); box-shadow: none; }
 .qty--card .qty__num { min-width: 28px; color: var(--gold-light); }
 .qty__btn {
   width: 38px; height: 38px; border: 0; border-radius: 50%; cursor: pointer;
@@ -496,25 +491,34 @@ button { font: inherit; }
 .step__text { margin: 0; font-size: 15px; color: var(--text-soft); max-width: 30ch; }
 
 /* ---------- Отзывы ---------- */
-/* Каждый отзыв в двойной золотой рамке: внешняя линия у края, внутренняя с отступом (::after).
-   На верхней линии по центру звезда, как застёжка (::before). Рамка у цитаты, а у .review прозрачный запас сверху
-   под звезду: так при раскладке в две колонки звезда не выступает за отзыв и не режется на стыке колонок. */
-.reviews { column-gap: 32px; }
-.review { break-inside: avoid; margin: 0; padding: 10px 0 22px; }
-.review__text {
-  position: relative; margin: 0; padding: 34px 30px 30px;
-  border: 1px solid var(--line); border-radius: 4px;
-  background: var(--review-bg);
-  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
-  font-family: var(--font-serif); font-weight: 500; font-size: 21px; line-height: 1.5; color: var(--text); text-align: center; text-wrap: pretty;
+/* Отзывы как карточки книг: пергамент с золотой кромкой на бордовом фоне, как в каталоге.
+   Сверху золотой круг с кавычками (тот же, что круг с иконкой на кнопке «В корзину»), текст антиквой у левого края:
+   длинный отзыв так читается легче, чем по центру. Подпись со звездой внизу под тонкой линией только у отзыва с именем (name).
+   Наведение не меняет отзыв: он не кликается. В две колонки отзывы разной длины укладываются плотно (columns).
+   Отступ между отзывами это прозрачный низ .review, а не margin: так он не переносится на верх следующей колонки */
+.reviews { column-gap: 24px; margin-bottom: -24px; }
+/* Под отзывами золотая кнопка в Instagram, к актуальным с остальными отзывами */
+.reviews__more { display: flex; justify-content: center; margin-top: 40px; }
+.reviews__more .btn { max-width: 100%; height: auto; min-height: 54px; padding: 14px 30px; text-align: center; line-height: 1.25; }
+.review { break-inside: avoid; margin: 0; padding-bottom: 24px; color: var(--text); }
+.review__card {
+  margin: 0; padding: 28px 30px 22px;
+  border: 1px solid var(--card-line); border-radius: var(--card-radius);
+  background: var(--card-bg); box-shadow: var(--card-shadow);
 }
-.review__text::after {
-  content: ""; position: absolute; inset: 6px; pointer-events: none;
-  border: 1px solid var(--review-inner-line); border-radius: 2px;
+.review__card::before {
+  content: ""; display: block; width: 42px; height: 42px; margin-bottom: 16px; border-radius: 50%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%234a0410' transform='rotate(180 12 12)' d='M4 17.5h4.2l2.3-4.6V6.5H4v6.4h3.1zm9.5 0h4.2l2.3-4.6V6.5h-6.5v6.4h3.1z'/%3E%3C/svg%3E") center / 22px no-repeat, var(--gold-grad);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 8px 16px -8px rgba(143, 100, 32, .7);
 }
-.review__text::before {
-  content: ""; position: absolute; top: -10px; left: calc(50% - 16px); z-index: 1; width: 32px; height: 20px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cg fill='%23c99a45'%3E%3Crect x='4' y='4' width='12' height='12'/%3E%3Crect x='4' y='4' width='12' height='12' transform='rotate(45 10 10)'/%3E%3C/g%3E%3C/svg%3E") center / 16px 16px no-repeat, var(--review-clasp-bg);
+.review__text { margin: 0; font-family: var(--font-serif); font-weight: 500; font-size: 21px; line-height: 1.5; color: var(--text); text-wrap: pretty; }
+.review__author {
+  display: flex; align-items: center; gap: 10px; margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--line-faint);
+  font-family: var(--font-label); font-size: 12px; font-weight: 600; line-height: 1.3; letter-spacing: .1em; text-transform: uppercase; color: var(--text-soft);
+}
+.review__author::before {
+  content: ""; flex: none; width: 14px; height: 14px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cg fill='%238f6420'%3E%3Crect x='4' y='4' width='12' height='12'/%3E%3Crect x='4' y='4' width='12' height='12' transform='rotate(45 10 10)'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
 }
 
 /* ---------- Контакты ---------- */
@@ -617,9 +621,9 @@ body.lock { overflow: hidden; }
   .js .reveal.is-visible { animation: reveal .8s var(--ease-reveal) var(--delay, 0s) backwards; }
   /* Орнамент под заголовком раскрывается от центра к краям чуть позже самого заголовка */
   .js .reveal.is-visible .ornament { animation: draw 1s var(--ease-reveal) calc(var(--delay, 0s) + .2s) backwards; }
-  /* Золотая линия над шагом прорисовывается слева направо, ромб над отзывом разворачивается */
+  /* Золотая линия над шагом прорисовывается слева направо, круг с кавычками над отзывом разворачивается */
   .js .step.is-visible::after { animation: draw 1s var(--ease-reveal) calc(var(--delay, 0s) + .25s) backwards; }
-  .js .review.is-visible .review__text::before { animation: turn .9s var(--ease-reveal) calc(var(--delay, 0s) + .2s) backwards; }
+  .js .review.is-visible .review__card::before { animation: turn .9s var(--ease-reveal) calc(var(--delay, 0s) + .2s) backwards; }
 }
 @keyframes reveal { from { opacity: 0; transform: translate3d(0, 30px, 0); } }
 @keyframes draw { from { opacity: 0; transform: scaleX(0); } }
@@ -670,9 +674,16 @@ body.lock { overflow: hidden; }
 }
 
 @media (max-width: 440px) {
-  .review__text { padding: 30px 20px 24px; font-size: 19px; }
+  .reviews__more .btn { padding: 14px 20px; font-size: 15px; }
+  .reviews__more .btn > svg:last-child { display: none; }   /* без стрелки кнопка входит в одну строку */
+  .review { padding-bottom: 16px; }
+  .reviews { margin-bottom: -16px; }
+  .review__card { padding: 22px 20px 18px; }
+  .review__text { font-size: 19px; }
   .book { --card-radius: 16px; --media-radius: 11px; padding: 10px; }
-  .book__title { font-size: 17px; }
+  .book__body { padding: 14px 4px 2px; }
+  .book__title { font-size: 19px; }   /* длинное слово («университетское») целиком входит в строку на экране 375px */
+  .price { font-size: 24px; }
 }
 @media (max-width: 380px) {
   .hero__title { font-size: 58px; }

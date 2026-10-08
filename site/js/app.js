@@ -82,23 +82,24 @@
       card.dataset.id = b.id;
 
       var body = el("div", "book__body");
+      var info = el("div", "book__info");   // текст отдельно: под ним отступ, ниже линия и строка с ценой
       var title = el("h3", "book__title", b.title);
       title.title = b.title;   // название обрезается до двух строк, полностью видно во всплывающей подсказке
       var author = el("p", "book__author", b.author);
       author.title = b.author;
-      body.append(title, author);
-      if (b.note) body.append(el("p", "book__note", b.note));
+      info.append(title, author);
+      if (b.note) info.append(el("p", "book__note", b.note));
 
       var buy = el("div", "book__buy");
       buy.append(el("div", "price", rub(b.price)), el("div", "book__slot"));
-      body.append(buy);
+      body.append(info, buy);
 
       card.append(bookMedia(b), body);
       grid.append(card);
     });
   }
 
-  // Фото книги с метками поверх. Если фото несколько: лента со свайпом, стрелки и точки внизу
+  // Фото книги без надписей поверх. Если фото несколько: лента со свайпом, стрелки и точки внизу
   function bookMedia(b) {
     var photos = b.images && b.images.length ? b.images : [b.image];
     var media = el("div", "book__media");
@@ -112,17 +113,6 @@
       track.append(slide);
     });
     media.append(track);
-
-    // Слева метки товара («Под заказ» ставится по preorder), справа одна метка badge, например формат
-    var tags = (b.preorder ? ["Под заказ"] : []).concat(b.tags || []);
-    if (tags.length || b.badge) {
-      var pills = el("div", "book__pills");
-      var left = el("div", "book__tags");
-      tags.forEach(function (t) { left.append(el("span", "pill", t)); });
-      pills.append(left);
-      if (b.badge) pills.append(el("span", "pill book__badge", b.badge));
-      media.append(pills);
-    }
 
     if (photos.length > 1) {
       track.setAttribute("aria-label", "Фото книги «" + b.title + "»");
@@ -231,10 +221,16 @@
   function buildReviews() {
     var box = $("#reviewsList");
     REVIEWS.forEach(function (r) {
-      var card = el("figure", "review reveal");
+      // Обёртка .review даёт отступ до следующего отзыва, карточка внутри: цитата и подпись, только если указано имя
+      var item = el("div", "review reveal");
+      var card = el("figure", "review__card");
       card.append(el("blockquote", "review__text", r.text));
-      box.append(card);
+      if (r.name) card.append(el("figcaption", "review__author", r.name));
+      item.append(card);
+      box.append(item);
     });
+    // Кнопка под отзывами ведёт в Instagram, где актуальные с остальными отзывами
+    $("#reviewsMore").href = SITE.reviewsLink || SITE.instagram;
   }
 
   function buildContacts() {
