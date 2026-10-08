@@ -694,6 +694,12 @@ body.lock { overflow: hidden; }
   .books { --cols: 4; }
 }
 
+/* На телефоне отзывы идут в одну колонку и страница становится длинной: видны только первые три,
+   остальные открываются кнопкой «Смотреть все отзывы в Instagram» */
+@media (max-width: 639px) {
+  .review:nth-child(n+4) { display: none; }
+}
+
 @media (max-width: 440px) {
   .follow { margin-top: 44px; }
   .follow__text { font-size: 22px; }
