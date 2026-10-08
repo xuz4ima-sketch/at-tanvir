@@ -233,20 +233,28 @@
     $("#reviewsMore").href = SITE.reviewsLink || SITE.instagram;
   }
 
+  // Кнопки «Следите за новыми поступлениями» под каталогом
+  function buildFollow() {
+    $("#followTelegram").href = SITE.telegram;
+    $("#followInstagram").href = SITE.instagram;
+  }
+
   function buildContacts() {
     var box = $("#contactsList");
     var items = [
       { key: "whatsapp", title: "WhatsApp", sub: "Написать напрямую", href: waLink("Ассаламу алейкум! У меня вопрос по книгам.") },
-      { key: "telegram", title: "Telegram", sub: "Наш канал и чат", href: SITE.telegram },
+      { key: "telegram", title: "Чат в Telegram", sub: "Задать вопрос", href: SITE.telegramChat || SITE.telegram },
+      { key: "telegram", title: "Канал в Telegram", sub: "Новинки и поступления", href: SITE.telegram },
       { key: "instagram", title: "Instagram", sub: "@" + SITE.instagramHandle, href: SITE.instagram }
     ];
     items.forEach(function (it) {
       var a = el("a", "contact");
       a.href = it.href; a.target = "_blank"; a.rel = "noopener noreferrer";
       var icon = el("span", "contact__icon"); icon.innerHTML = ICONS[it.key];
-      var txt = el("span");
+      var txt = el("span", "contact__text");
       txt.append(el("span", "contact__title", it.title), el("span", "contact__sub", it.sub));
-      a.append(icon, txt);
+      var go = el("span", "contact__go"); go.innerHTML = ARROW;   // стрелка справа, как у кнопок сайта
+      a.append(icon, txt, go);
       box.append(a);
     });
   }
@@ -511,6 +519,7 @@
   $("#year").textContent = new Date().getFullYear();
   buildCatalog();
   buildReviews();
+  buildFollow();
   buildContacts();
   render();
   initHeader();

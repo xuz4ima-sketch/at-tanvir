@@ -477,6 +477,11 @@ button { font: inherit; }
 .qty__btn:active { transform: scale(.92); }
 .qty__num { min-width: 38px; text-align: center; font-weight: 800; font-size: 17px; color: var(--text); font-variant-numeric: tabular-nums; }
 
+/* Под каталогом: призыв следить за новинками и две кнопки, в Telegram-канал и в Instagram */
+.follow { margin-top: 56px; text-align: center; }
+.follow__text { margin: 0 auto 24px; max-width: 30ch; font-family: var(--font-serif); font-weight: 600; font-size: 26px; line-height: 1.25; color: var(--gold-light); text-wrap: balance; }
+.follow__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+
 /* ---------- Как заказать ---------- */
 .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 26px; counter-reset: step; }
 .step { position: relative; counter-increment: step; display: grid; grid-template-columns: 52px minmax(0, 1fr); align-content: start; padding-top: 20px; border-top: 1px solid var(--line); }
@@ -524,15 +529,31 @@ button { font: inherit; }
 /* ---------- Контакты ---------- */
 .contacts-grid { display: grid; gap: 28px; }
 .contacts-text { margin: 14px 0 0; color: var(--text-soft); max-width: 36ch; }
-.contacts { display: grid; border-top: 1px solid var(--line); }
-.contact { display: flex; align-items: center; gap: 16px; padding: 18px 0; text-decoration: none; border-bottom: 1px solid var(--line); transition: padding-left .35s var(--ease); }
-.contact__icon { flex: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; color: var(--gold); border: 1px solid var(--line); transition: background-color .3s, color .3s, transform .35s var(--ease); }
-.contact__icon svg { width: 22px; height: 22px; }
-.contact__title { display: block; font-weight: 700; font-size: 17px; line-height: 1.3; color: var(--text); transition: color .25s; }
-.contact__sub { display: block; font-size: 14px; color: var(--text-soft); }
-.contact:hover { padding-left: 8px; }
-.contact:hover .contact__title { color: var(--gold-light); }
-.contact:hover .contact__icon { background: var(--gold-grad); color: var(--on-gold); transform: rotate(-8deg) scale(1.05); }
+/* Кнопки соцсетей в форме таблетки, как «В корзину»: слева золотой круг с иконкой, справа стрелка.
+   Светлая бумага с тонкой рамкой, при наведении кнопка заливается бордовым, текст становится светлым золотым */
+.contacts { display: grid; gap: 12px; }
+.contact {
+  display: flex; align-items: center; gap: 14px; min-height: 64px; padding: 7px 18px 7px 7px;
+  border: 1px solid var(--line); border-radius: 999px; background: var(--field-bg);
+  text-decoration: none; box-shadow: 0 12px 24px -20px rgba(43, 11, 16, .5);
+  transition: background-color .3s, border-color .3s, transform .3s var(--ease), box-shadow .3s var(--ease);
+}
+.contact__icon {
+  flex: none; width: 50px; height: 50px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--gold-grad); color: var(--on-gold); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6);
+  transition: transform .35s var(--ease);
+}
+.contact__icon svg { width: 23px; height: 23px; }
+.contact__text { flex: 1; min-width: 0; }
+.contact__title { display: block; font-weight: 700; font-size: 17px; line-height: 1.3; color: var(--gold-light); transition: color .3s; }
+.contact__sub { display: block; font-size: 14px; line-height: 1.35; color: var(--text-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: color .3s; }
+.contact__go { flex: none; display: grid; place-items: center; color: var(--gold); transition: transform .3s var(--ease), color .3s; }
+.contact:hover { background: var(--wine); border-color: var(--wine); transform: translateY(-2px); box-shadow: 0 16px 28px -16px rgba(var(--wine-rgb), .8); }
+.contact:hover .contact__title, .contact:hover .contact__go { color: #f6e4b8; }
+.contact:hover .contact__sub { color: rgba(246, 228, 184, .8); }
+.contact:hover .contact__icon { transform: rotate(-8deg); }
+.contact:hover .contact__go { transform: translateX(4px); }
+.contact:active { transform: scale(.98); }
 /* ---------- Подвал ---------- */
 /* Узкая полоса с логотипом, поэтому отступы меньше, чем у секций */
 .footer { position: relative; z-index: 0; padding: 32px 0; background: linear-gradient(180deg, var(--wine), var(--wine-shade)); }
@@ -674,6 +695,9 @@ body.lock { overflow: hidden; }
 }
 
 @media (max-width: 440px) {
+  .follow { margin-top: 44px; }
+  .follow__text { font-size: 22px; }
+  .follow__actions .btn { width: 100%; }   /* кнопки друг под другом во всю ширину, в них легко попасть пальцем */
   .reviews__more .btn { padding: 14px 20px; font-size: 15px; }
   .reviews__more .btn > svg:last-child { display: none; }   /* без стрелки кнопка входит в одну строку */
   .review { padding-bottom: 16px; }

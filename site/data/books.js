@@ -26,7 +26,8 @@
 window.SITE = {
   name: "Ат-Танвир",
   whatsapp: "70000000000", // TODO: номер магазина, только цифры
-  telegram: "https://t.me/prosveshcheniye76",
+  telegram: "https://t.me/prosveshcheniye76", // канал
+  telegramChat: "", // TODO: ссылка на чат в Telegram, например https://t.me/имя. Пока пусто, кнопка «Чат» ведёт в канал
   instagram: "https://www.instagram.com/at.tanvir4/",
   instagramHandle: "at.tanvir4",
   reviewsLink: "https://www.instagram.com/at.tanvir4/",

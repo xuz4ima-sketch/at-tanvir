@@ -1,0 +1,35 @@
+# Публикует папку site на GitHub Pages (ветка gh-pages).
+# Запускается после каждого пуша в main, где изменился сайт.
+name: Публикация сайта
+
+on:
+  push:
+    branches: [main]
+    paths: ["site/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Браузер держит CSS и JS в кэше до 10 минут. Без новой версии в адресе после
+      # обновления сайта он мог взять новую страницу со старым скриптом, и страница ломалась.
+      - name: Привязать версии CSS и JS к коммиту
+        run: sed -i "s/?v=dev/?v=${GITHUB_SHA::8}/g" site/index.html
+
+      - name: Опубликовать сайт
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          publish_branch: gh-pages
+          force_orphan: true
